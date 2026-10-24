@@ -35,8 +35,6 @@ This repository documents my hands-on journey of learning Dockerfiles from funda
 | 13 | Multi-Stage Builds | Reduce final image size |
 | 14 | HEALTHCHECK and VOLUME | Understand health and persistence |
 | 15 | Best Practices | Improve image security |
-| 16 | Docker Compose | Manage application services |
-| 17 | Production Project | Apply the concepts in practice |
 
 ## 🛠️ Technologies
 
