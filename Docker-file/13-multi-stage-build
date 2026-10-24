@@ -1,0 +1,53 @@
+# 13 — Multi-Stage Builds
+
+## What Is a Multi-Stage Build?
+
+A multi-stage build uses multiple `FROM` instructions to separate the build environment from the final runtime image.
+
+The build stage may contain compilers and development tools, while the final stage contains only what the application needs to run.
+
+## Example: Go Application
+
+```dockerfile
+FROM golang:1.25 AS builder
+
+WORKDIR /src
+
+COPY . .
+
+RUN go build -o /app/server .
+
+FROM scratch
+
+COPY --from=builder /app/server /server
+
+ENTRYPOINT ["/server"]
+```
+
+This example assumes the Go application compiles successfully and does not require additional runtime files or shared libraries.
+
+## Important Instructions
+
+- `AS builder` gives the build stage a name.
+- The first stage compiles the source code.
+- `COPY --from=builder` copies the compiled executable.
+- `FROM scratch` starts from an empty base image.
+
+## Benefits
+
+- Smaller final images in suitable applications.
+- Fewer development tools in the runtime image.
+- Better separation of build and runtime dependencies.
+- Potentially reduced attack surface.
+
+## Important Considerations
+
+Some applications require certificates, shared libraries, configuration files, or other runtime assets. An empty final image is not suitable for every application.
+
+## Practice Tasks
+
+1. Find an application that requires compilation.
+2. Create a builder stage.
+3. Copy the compiled output to the final stage.
+4. Compare the final image size with a single-stage image.
+5. Explain which files are unnecessary at runtime.
