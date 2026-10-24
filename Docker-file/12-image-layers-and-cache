@@ -1,0 +1,58 @@
+# 12 — Image Layers and Build Cache
+
+## What Are Image Layers?
+
+Docker images are built from filesystem layers and image configuration. Many Dockerfile instructions create filesystem changes that can be stored in layers.
+
+Layers can be reused across images, reducing duplicate storage.
+
+## What Is Build Cache?
+
+Docker can reuse previous build results when the relevant instructions and their inputs have not changed.
+
+## Example Dockerfile
+
+```dockerfile
+FROM ubuntu:24.04
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY app.sh .
+
+CMD ["bash", "app.sh"]
+```
+
+## Build the Image
+
+```bash
+docker build --progress=plain -t cache-demo:v1 .
+docker build --progress=plain -t cache-demo:v1 .
+```
+
+The second build may reuse cached steps.
+
+## Inspect Image History
+
+```bash
+docker history cache-demo:v1
+```
+
+## Best Practices
+
+- Place stable dependency-installation steps before frequently changing source files when practical.
+- Combine related package-management commands.
+- Remove unnecessary temporary files.
+- Avoid invalidating expensive cache steps unnecessarily.
+- Remember that cache behavior depends on the instruction and its inputs.
+
+## Practice Tasks
+
+1. Build an image twice.
+2. Change only the application file and rebuild.
+3. Observe which steps are cached.
+4. Compare the image history before and after changing the Dockerfile.
+5. Explain why build caching helps CI/CD pipelines.
